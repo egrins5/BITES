@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard">
+            <h2>Dashboard</h2>
+            {% if is_admin %}
+            <div class="admin-controls">
+                <form action="{{ url_for('add_data') }}" method="post">
+                    <h3>Add Data</h3>
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="temperature">Temperature:</label>
+                        <input type="string" id="temperature" name="temperature" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="humidity">Humidity:</label>
+                        <input type="number" id="humidity" name="humidity" required>
+                    </div>
+                    <button type="submit">Add Data</button>
+                </form>
+            </div>
+            {% endif %}
+            <div class="data">
+                {% if data %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Temperature</th>
+                            <th>Humidity</th>
+                            {% if is_admin %}
+                            <th>Actions</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data %}
+                        <tr>
+                            <td>{{ row[3] }}</td> <!-- Date -->
+                            <td>{{ row[1] }}°C</td> <!-- Temperature -->
+                            <td>{{ row[2] }}</td> <!-- Humidity -->
+                            {% if is_admin %}
+                            <td>
+                                <form action="{{ url_for('edit_data', data_id=row[0]) }}" method="post">
+                                    <input type="hidden" name="_method" value="PATCH">
+                                    <div class="form-group">
+                                        <label for="edit_date">Date:</label>
+                                        <input type="date" id="edit_date" name="date" value="{{ row[3] }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="edit_temperature">Temperature:</label>
+                                        <input type="number" id="edit_temperature" name="temperature" value="{{ row[1] }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="edit_humidity">Humidity:</label>
+                                        <input type="number" id="edit_humidity" name="humidity" value="{{ row[2].rstrip('%') }}" required>
+                                    </div>
+                                    <button type="submit">Save Changes</button>
+                                </form>
+                                <form action="{{ url_for('delete_data', data_id=row[0]) }}" method="post">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No data available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
