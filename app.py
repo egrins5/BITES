@@ -4,7 +4,7 @@ from datetime import datetime
 
 # Flask Init
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = 'SSMZvmXwoVVbP7rC1BPWPfoeD9S9nG65'
 
 
 # Connect to DB
